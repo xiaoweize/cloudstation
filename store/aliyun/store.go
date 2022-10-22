@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/go-playground/validator"
 	"github.com/xiaoweize/cloudstation/store"
 )
 
@@ -35,9 +36,24 @@ func (alioss *Aliyunoss) Upload(ossbucket, objectKey, localfile string) error {
 	return nil
 }
 
-//Aliyunoss对象构造函数
-func NewAliyunOss(endpoint, accessKeyID, accessKeySecret string) (*Aliyunoss, error) {
-	c, err := oss.New(endpoint, accessKeyID, accessKeySecret)
+type Options struct {
+	Endpoint        string `validate:"required"`
+	AccessKeyID     string `validate:"required"`
+	AccessKeySecret string `validate:"required"`
+}
+
+//验证参数
+func (o *Options) Validate() error {
+	validate := validator.New()
+	return validate.Struct(o)
+}
+
+//Aliyunoss对象构造函数，使用构造函数生成示例，再调用Upload方法
+func NewAliyunOss(opts *Options) (*Aliyunoss, error) {
+	if err := opts.Validate(); err != nil {
+		return nil, err
+	}  
+	c, err := oss.New(opts.Endpoint, opts.AccessKeyID, opts.AccessKeySecret)
 	if err != nil {
 		return nil, err
 	} else {

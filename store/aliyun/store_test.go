@@ -1,4 +1,4 @@
-package aliyun_test 
+package aliyun_test
 
 import (
 	"os"
@@ -38,12 +38,17 @@ func TestUploadError(t *testing.T) {
 	//制造错误，设置一个不存在的本地文件
 	err := uploader.Upload(ossbucket, "test.go", "store_test.g")
 	//断言错误是否为上面制造的预期错误
-	should.Error(err, "open store_test.g: no such file or directory")
+	should.Error(err, "ope n store_test.g: no such file or directory")
 }
 
 //初始化uploader
 func init() {
-	c, err := aliyun.NewAliyunOss(endpoint, accessKeyID, accessKeySecret)
+	//使用函数构造，同时会验证传进去的参数
+	c, err := aliyun.NewAliyunOss(&aliyun.Options{
+		Endpoint:        endpoint,
+		AccessKeyID:     accessKeyID,
+		AccessKeySecret: accessKeySecret,
+	})
 	if err != nil {
 		panic(err)
 	}
