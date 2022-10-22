@@ -32,7 +32,7 @@ func (alioss *Aliyunoss) Upload(ossbucket, objectKey, localfile string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("文件下载地址:%s\n,有效期1天", downloadUrl)
+	fmt.Printf("文件下载地址:%s\n,有效期1天\n", downloadUrl)
 	return nil
 }
 
@@ -52,7 +52,7 @@ func (o *Options) Validate() error {
 func NewAliyunOss(opts *Options) (*Aliyunoss, error) {
 	if err := opts.Validate(); err != nil {
 		return nil, err
-	}  
+	}
 	c, err := oss.New(opts.Endpoint, opts.AccessKeyID, opts.AccessKeySecret)
 	if err != nil {
 		return nil, err
