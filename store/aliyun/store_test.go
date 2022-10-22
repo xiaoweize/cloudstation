@@ -25,8 +25,10 @@ var (
 
 //测试代码上传功能是否正常
 func TestUpload(t *testing.T) {
+	//使用断言方式更友好，不用写if err != nil{}
 	should := assert.New(t)
 	err := uploader.Upload(ossbucket, "test.go", "store_test.go")
+	//断言err是否为非error 如果不是err返回true
 	if should.NoError(err) {
 		t.Log("upload ok")
 	}
@@ -34,6 +36,7 @@ func TestUpload(t *testing.T) {
 
 //测试代码上传报错
 func TestUploadError(t *testing.T) {
+	//使用断言方式更友好，不用写if err != nil{}
 	should := assert.New(t)
 	//制造错误，设置一个不存在的本地文件
 	err := uploader.Upload(ossbucket, "test.go", "store_test.g")
