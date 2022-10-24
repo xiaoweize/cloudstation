@@ -4,13 +4,23 @@ import (
 	"fmt"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/go-playground/validator"
 	"github.com/xiaoweize/cloudstation/store"
 )
 
 var (
-	//对象是否实现接口的约束
-	_ store.Uploader = &Aliyunoss{}
+	// 对象是否实现了接口的约束
+	// a string = "abc"
+	// _ store.Uploader 我不需要这个变量的值, 我只是做变量类型的判断
+	// &AliOssStore{} 这个对象 必须满足 store.Uploader
+	// _ store.Uploader = &AliOssStore{} 声明了一个空对象, 只是需要一个地址
+	// nil 空指针, nil有没有类型？: 有类型
+	// a *AliOssStore = nil   nil是一个AliOssStore 的指针
+	// 如何把nil 转化成一个 指定类型的变量
+	//    a int = 16
+	//    b int64 = int64(a)
+	//    (int64类型)(值)
+	//	  (*Aliyunoss)(nil)
+	_ store.Uploader = (*Aliyunoss)(nil)
 )
 
 type Aliyunoss struct {
@@ -37,15 +47,17 @@ func (alioss *Aliyunoss) Upload(ossbucket, objectKey, localfile string) error {
 }
 
 type Options struct {
-	Endpoint        string `validate:"required"`
-	AccessKeyID     string `validate:"required"`
-	AccessKeySecret string `validate:"required"`
+	Endpoint        string
+	AccessKeyID     string
+	AccessKeySecret string
 }
 
 //验证参数
 func (o *Options) Validate() error {
-	validate := validator.New()
-	return validate.Struct(o)
+	if o.Endpoint == "" || o.AccessKeyID == "" || o.AccessKeySecret == "" {
+		return fmt.Errorf("Endpoint,AccessKeyID,AccessKeySecret has one empty!")
+	}
+	return nil
 }
 
 //Aliyunoss对象构造函数，使用构造函数生成示例，再调用Upload方法
